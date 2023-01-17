@@ -14,3 +14,11 @@ SPRITE_SIZE = 16
 # FPS and movement values
 Hertz = 60
 MOVEMENT_SPED = 1
+
+# For the button states 
+button_state = {
+    "button_up" : "",
+    "button_just_pressed" : "just pressed",
+    "button_still_pressed" : "still pressed",
+    "button_released" : "released",
+}
