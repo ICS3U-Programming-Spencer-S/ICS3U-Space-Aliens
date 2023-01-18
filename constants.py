@@ -2,7 +2,7 @@
 
 # Created By: Spencer Scarlett
 # Date: Jan 9, 2022
-#Constants folder for a pybadge
+# Constants folder for a pybadge
 
 
 # PyBadge Screen size and sprite size
@@ -15,10 +15,16 @@ SPRITE_SIZE = 16
 Hertz = 60
 MOVEMENT_SPED = 1
 
-# For the button states 
+# For the button states
 button_state = {
-    "button_up" : "",
-    "button_just_pressed" : "just pressed",
-    "button_still_pressed" : "still pressed",
-    "button_released" : "released",
+    "button_up": "",
+    "button_just_pressed": "just pressed",
+    "button_still_pressed": "still pressed",
+    "button_released": "released",
 }
+
+# Adds a red pallet
+RED_PALETTE = (
+    b"\xff\xff\x00\x22\xcey\x22\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+    b"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
+)
