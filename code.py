@@ -92,7 +92,7 @@ def splash_scene():
     # repeats forever, game loop
     while True:
         # waits for 5 seconds
-        time.sleep(5.0)
+        time.sleep(2.0)
         menu_scene()
 
 
@@ -148,6 +148,13 @@ def menu_scene():
 def game_scene():
     # function for the game scene
 
+    def display_enemies():
+        # function that takes aliens that are off the screen but moves it to the screen when needed
+        for enemies_num in range(len(enemies)):
+            if enemies[enemies_num].x < 0:
+                enemies[enemies_num].move(random.randint(0 + constants.SPRITE_SIZE, constants.SCREEN_X - constants.SPRITE_SIZE), constants.OFF_TOP_SCREEN)
+                break
+
     # access image bank for PyBadge
     # uses the background variable and sets its size
     image_bank_background = stage.Bank.from_bmp16("dirt_background.bmp")
@@ -164,7 +171,7 @@ def game_scene():
     sound = ugame.audio
     sound.stop()
     sound.mute(False)
-    sound_state_glo = sound.mute(False)
+    #sound_state_glo = sound.mute(False)
 
     # uses the background variable and sets its size
     background = stage.Grid(
@@ -180,19 +187,29 @@ def game_scene():
         image_bank_sprites, 4, 75, constants.SCREEN_Z - (2 * constants.SPRITE_SIZE)
     )
 
-    # creates the enemy player variable
-    enemy = stage.Sprite(
-        image_bank_sprites,
-        7,
-        int(constants.SCREEN_X / 2 - constants.SPRITE_SIZE / 2),
-        16,
-    )
+    # creates the enemies list
+    enemies = []
+    for enemies_num in range(constants.MAX_NUM_EME):
+        a_single_enemy = stage.Sprite(image_bank_sprites,7,constants.OFF_SCREEN_X,constants.OFF_SCREEN_Y)
+        enemies.append(a_single_enemy)
+    
+    # places one enemy on the screen
+    display_enemies()
+
+    # list for the bullets(lasers) for the player
+    bullets = []
+    for bullets_num in range(constants.MAX_NUM_BULLET):
+        one_bullet = stage.Sprite(
+            image_bank_sprites, 10, constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y
+        )
+        bullets.append(one_bullet)
+    
 
     # sets the stage to 60 FPS
     game = stage.Stage(ugame.display, constants.Hertz)
 
     # creates both sprite and background layers
-    game.layers = [player] + [enemy] + [background]
+    game.layers = enemies + bullets + [player] + [background]
 
     # renders the background
     game.render_block()
@@ -217,14 +234,14 @@ def game_scene():
         # The B button (For mute button)
         if keys & ugame.K_O != 0:
             if b_button == constants.button_state["button_up"]:
-                b_button = constants.button_state["button_just_pressed"]
+                    b_button = constants.button_state["button_just_pressed"]
             elif b_button == constants.button_state["button_just_pressed"]:
-                b_button = constants.button_state["button_still_pressed"]
-        else:
-            if b_button == constants.button_state["button_still_pressed"]:
-                b_button = constants.button_state["button_released"]
+                    b_button = constants.button_state["button_still_pressed"]
             else:
-                b_button = constants.button_state["button_up"]
+                if b_button == constants.button_state["button_still_pressed"]:
+                    b_button = constants.button_state["button_released"]
+                else:
+                    b_button = constants.button_state["button_up"]
 
         # the start button
         if keys & ugame.K_START != 0:
@@ -260,24 +277,47 @@ def game_scene():
 
         # updates game logic
         # this is a mute button which changes the state
-        if b_button == constants.button_state["button_just_pressed"]:
-            if sound_state_glo == True:
-                sound_state_glo = False
-                print("Unmuted")
-            else:
-                sound_state_glo = True
-                print("muted")
+        # if b_button == constants.button_state["button_still_pressed"]:
+        #     if sound_state_glo == True:
+        #         sound_state_glo = False
+        #         print("un-muted")
+        #     else:
+        #         sound_state_glo = True
+        #         print("muted")
 
-        # this plays a sound when 'a' is pressed
+        # fires a button with sound when 'a' is pressed
         if a_button == constants.button_state["button_just_pressed"]:
-            if sound_state_glo == False:
-                sound.play(pew_sound)
-                print("sound")
-            else:
-                print("No sound")
+            for bullets_num in range(len(bullets)):
+                if bullets[bullets_num].x < 0:
+                    bullets[bullets_num].move(player.x + 3, player.y)
+                    #if sound_state_glo == False:
+                    sound.play(pew_sound)
+                    break
+                    
+
+        # move the bullet each frame
+        for bullets_num in range(len(bullets)):
+            if bullets[bullets_num].x > 0:
+                bullets[bullets_num].move(
+                    bullets[bullets_num].x,
+                    bullets[bullets_num].y - constants.PROJECTILE_SPEED,
+                )
+
+                if bullets[bullets_num].y < constants.OFF_TOP_SCREEN:
+                    bullets[bullets_num].move(
+                        constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y
+                    )
+
+        # moves the enemies down each frame
+        for enemies_num in range(len(enemies)):
+            if enemies[enemies_num].x > 0:
+                enemies[enemies_num].move(enemies[enemies_num].x, enemies[enemies_num].y + constants.ENEMY_SPEED)
+                if enemies[enemies_num].y > constants.SCREEN_Z:
+                    enemies[enemies_num].move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
+                    display_enemies()
 
         # redraws sprites
-        game.render_sprites([player] + [enemy])
+        game.render_sprites(enemies + bullets + [player])
         game.tick()
 
 

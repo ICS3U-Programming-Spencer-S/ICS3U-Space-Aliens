@@ -11,7 +11,20 @@ SCREEN_Z = 128
 SCREEN_GRID_X = 10
 SCREEN_GRID_Y = 8
 SPRITE_SIZE = 16
-# FPS and movement values
+# max enemies and bullet 
+MAX_NUM_EME = 5
+MAX_NUM_BULLET = 5
+# player and enemy sprite speed
+PLAYER_SPEED = 1
+ENEMY_SPEED = 1
+# projectile speed
+PROJECTILE_SPEED = 2
+# out of bounds
+OFF_SCREEN_X = -100
+OFF_SCREEN_Y = -100
+OFF_TOP_SCREEN = -1 * SPRITE_SIZE
+OFF_BOTTOM = SCREEN_GRID_Y + SPRITE_SIZE
+# FPS and base movement values
 Hertz = 60
 MOVEMENT_SPED = 1
 
