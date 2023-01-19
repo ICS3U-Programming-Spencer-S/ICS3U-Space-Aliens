@@ -148,12 +148,17 @@ def menu_scene():
 def game_scene():
     # function for the game scene
 
+
+
     def display_enemies():
         # function that takes aliens that are off the screen but moves it to the screen when needed
         for enemies_num in range(len(enemies)):
             if enemies[enemies_num].x < 0:
                 enemies[enemies_num].move(random.randint(0 + constants.SPRITE_SIZE, constants.SCREEN_X - constants.SPRITE_SIZE), constants.OFF_TOP_SCREEN)
                 break
+
+    # for score keeping
+    score = 0
 
     # access image bank for PyBadge
     # uses the background variable and sets its size
@@ -167,7 +172,8 @@ def game_scene():
     select_button = constants.button_state["button_up"]
 
     # gets sounds ready for usage
-    pew_sound = open("pew.wav", "rb")
+    pew_sound = open("pew.wav", 'rb')
+    boom_sound = open("boom.wav", 'rb')
     sound = ugame.audio
     sound.stop()
     sound.mute(False)
@@ -184,7 +190,7 @@ def game_scene():
 
     # creates a player variable sprite at 75x, 96y
     player = stage.Sprite(
-        image_bank_sprites, 4, 75, constants.SCREEN_Z - (2 * constants.SPRITE_SIZE)
+        image_bank_sprites, 4, 75, constants.SCREEN_Y - (2 * constants.SPRITE_SIZE)
     )
 
     # creates the enemies list
@@ -276,6 +282,7 @@ def game_scene():
             pass
 
         # updates game logic
+
         # this is a mute button which changes the state
         # if b_button == constants.button_state["button_still_pressed"]:
         #     if sound_state_glo == True:
@@ -294,7 +301,6 @@ def game_scene():
                     sound.play(pew_sound)
                     break
                     
-
         # move the bullet each frame
         for bullets_num in range(len(bullets)):
             if bullets[bullets_num].x > 0:
@@ -312,9 +318,28 @@ def game_scene():
         for enemies_num in range(len(enemies)):
             if enemies[enemies_num].x > 0:
                 enemies[enemies_num].move(enemies[enemies_num].x, enemies[enemies_num].y + constants.ENEMY_SPEED)
-                if enemies[enemies_num].y > constants.SCREEN_Z:
+                if enemies[enemies_num].y > constants.SCREEN_Y:
                     enemies[enemies_num].move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
                     display_enemies()
+        
+        #checks each frame to see if any bullets have hit an enemy
+        for bullets_num in range(len(bullets)):
+            if bullets[bullets_num].x > 0:
+                for enemies_num in range(len(enemies)):
+                    if enemies[enemies_num].x > 0:
+                        if stage.collide(bullets[bullets_num].x + 6, bullets[bullets_num].y + 2,
+                                         bullets[bullets_num].x + 11, bullets[bullets_num].y + 12,
+                                         enemies[enemies_num].x + 1, enemies[enemies_num].y,
+                                         enemies[enemies_num].x + 15, enemies[enemies_num].y + 15):
+                            # hit detection
+                            enemies[enemies_num].move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
+                            bullets[bullets_num].move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
+                            sound.stop()
+                            sound.play(boom_sound)
+                            display_enemies()
+                            display_enemies()
+                            # ups the score 
+                            score = score + 1
 
         # redraws sprites
         game.render_sprites(enemies + bullets + [player])
