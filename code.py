@@ -6,9 +6,12 @@
 
 import stage
 import ugame
+import supervisor
+
 import constants
 import time
 import random
+
 
 
 def splash_scene():
@@ -22,7 +25,7 @@ def splash_scene():
     sound.play(coin_flip)
 
     # image bank for the mt game studio
-    image_bank_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
+    image_bank_background = stage.Bank.from_bmp16("PyBadge_bank_color_template.bmp")
 
     # background that selects image one from the bank
     background = stage.Grid(
@@ -91,7 +94,7 @@ def splash_scene():
 
     # repeats forever, game loop
     while True:
-        # waits for 5 seconds
+        # waits for 2 seconds
         time.sleep(2.0)
         menu_scene()
 
@@ -101,13 +104,13 @@ def menu_scene():
 
     # access image bank for PyBadge
     # uses the background variable and sets its size
-    image_bank_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
+    image_bank_background = stage.Bank.from_bmp16("WORLD_BACKGROUND.bmp")
 
     # Text for main menu scene
     # Displays MT Game Studies at the top
     text = []
     text1 = stage.Text(
-        width=29, height=12, font=None, palette=constants.RED_PALETTE, buffer=None
+        width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None
     )
     text1.move(20, 10)
     text1.text("MT Game Studies")
@@ -115,11 +118,31 @@ def menu_scene():
 
     # Press start prompt
     text2 = stage.Text(
-        width=29, height=12, font=None, palette=constants.RED_PALETTE, buffer=None
+        width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None
     )
-    text2.move(40, 110)
-    text2.text("PRESS START")
+    text2.move(3, 110)
+    text2.text("PRESS START TO PLAY")
     text.append(text2)
+
+    text3 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text3.move(20, 40)
+    text3.text("PRESS SELECT FOR")
+    text.append(text3)
+
+    text4 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text4.move(40, 50)
+    text4.text("GAME INFO")
+    text.append(text4)
+    
+    text5 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text5.move(30, 80)
+    text5.text(" PRESS A FOR")
+    text.append(text5)
+    
+    text6 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text6.move(50, 90)
+    text6.text("CONTROLS")
+    text.append(text6)
 
     # uses the background variable and sets its size
     background = stage.Grid(
@@ -144,11 +167,121 @@ def menu_scene():
         if keys & ugame.K_START != 0:
             game_scene()
 
+        if keys & ugame.K_SELECT != 0:
+            how_to_scene()
+            
+        if keys & ugame.K_X != 0:
+            controls_scene()
+            
+def controls_scene():
+    # this is a function controls info
+    
+    # image bank for background
+    image_bank_background = stage.Bank.from_bmp16("how_to.bmp")
+    
+    text = []
+    text1 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text1.move(2,20)
+    text1.text("A = Fire Bullet\nLeft D-pad =\nMove left\nRight D-pad =\nMove right\n\n")
+    text.append(text1)
+    
+    text2 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text2.move(2, 90)
+    text2.text("Press START to the\nstart game or B to\nreturn to the main\nmenu!")
+    text.append(text2)
+    
+    text3 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text3.move(26, 10)
+    text3.text("!!!CONTROLS!!!")
+    text.append(text3)
+    
+    # set the backgorund image to 0 in the image bank
+    # and the size (10x8 tiles of size 16x16)
+    background = stage.Grid(image_bank_background, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+
+    # create a stage for the background to show up on
+    # and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, constants.Hertz)
+    
+    # set the layers of all sprites, items show up in order
+    game.layers = text + [background]
+    
+    # render all sprites
+    # most likely you will only render the background once per game scene
+    game.render_block()
+
+    # repeat forever, game loop
+    while True:
+        # get user input
+        keys = ugame.buttons.get_pressed()
+
+        # call game scene
+        if keys & ugame.K_O != 0:
+            menu_scene()
+        if keys & ugame.K_START != 0:
+            game_scene()
+
+        # redraw Sprites
+        game.tick()
+
+
+def how_to_scene():
+    # this function is the game info scene
+
+    # image banks for CircuitPython
+    image_bank_background = stage.Bank.from_bmp16("how_to.bmp")
+
+    # add text objects
+    text = []
+    text1 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text1.move(2,10)
+    text1.text("Welcome to my game\nHorde!")
+    text.append(text1)
+
+    text2 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text2.move(2, 30)
+    text2.text("In this game you are\na defender of Earth.\nYour mission is to\ndestory as many\ndemons before they\noverwelm you.\n")
+    text.append(text2)
+
+    text3 = stage.Text(width=29, height=12, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text3.move(2, 90)
+    text3.text("Press START to the\nstart game or B to\nreturn to the main\nmenu!")
+    text.append(text3)
+    
+
+    # set the backgorund image to 0 in the image bank
+    # and the size (10x8 tiles of size 16x16)
+    background = stage.Grid(image_bank_background, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+
+    # create a stage for the background to show up on
+    # and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, constants.Hertz)
+    
+    # set the layers of all sprites, items show up in order
+    game.layers = text + [background]
+    
+    # render all sprites
+    # most likely you will only render the background once per game scene
+    game.render_block()
+
+    # repeat forever, game loop
+    while True:
+        # get user input
+        keys = ugame.buttons.get_pressed()
+
+        # call game scene
+        if keys & ugame.K_O != 0:
+            menu_scene()
+        if keys & ugame.K_START != 0:
+            game_scene()
+
+        # redraw Sprites
+        game.tick()
+
+
 
 def game_scene():
     # function for the game scene
-
-
 
     def display_enemies():
         # function that takes aliens that are off the screen but moves it to the screen when needed
@@ -159,6 +292,13 @@ def game_scene():
 
     # for score keeping
     score = 0
+
+    score_text = stage.Text(width=29, height=14)
+    score_text.clear()
+    score_text.cursor(0,0)
+    score_text.move(1,1)
+    score_text.text("Score: {0}".format(score))
+
 
     # access image bank for PyBadge
     # uses the background variable and sets its size
@@ -172,8 +312,9 @@ def game_scene():
     select_button = constants.button_state["button_up"]
 
     # gets sounds ready for usage
-    pew_sound = open("pew.wav", 'rb')
+    shot_sound = open("Gun.wav", 'rb')
     boom_sound = open("boom.wav", 'rb')
+    crash_sound = open("crash.wav", 'rb')
     sound = ugame.audio
     sound.stop()
     sound.mute(False)
@@ -215,7 +356,7 @@ def game_scene():
     game = stage.Stage(ugame.display, constants.Hertz)
 
     # creates both sprite and background layers
-    game.layers = enemies + bullets + [player] + [background]
+    game.layers = [score_text] + enemies + bullets + [player] + [background]
 
     # renders the background
     game.render_block()
@@ -283,22 +424,13 @@ def game_scene():
 
         # updates game logic
 
-        # this is a mute button which changes the state
-        # if b_button == constants.button_state["button_still_pressed"]:
-        #     if sound_state_glo == True:
-        #         sound_state_glo = False
-        #         print("un-muted")
-        #     else:
-        #         sound_state_glo = True
-        #         print("muted")
-
         # fires a button with sound when 'a' is pressed
         if a_button == constants.button_state["button_just_pressed"]:
             for bullets_num in range(len(bullets)):
                 if bullets[bullets_num].x < 0:
                     bullets[bullets_num].move(player.x + 3, player.y)
                     #if sound_state_glo == False:
-                    sound.play(pew_sound)
+                    sound.play(shot_sound)
                     break
                     
         # move the bullet each frame
@@ -321,6 +453,14 @@ def game_scene():
                 if enemies[enemies_num].y > constants.SCREEN_Y:
                     enemies[enemies_num].move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
                     display_enemies()
+                    # keeps track of the score
+                    score -= 1
+                    if score < 0:
+                        score = 0
+                    score_text.clear()
+                    score_text.cursor(0,0)
+                    score_text.move(1,1)
+                    score_text.text("Score: {0}".format(score))
         
         #checks each frame to see if any bullets have hit an enemy
         for bullets_num in range(len(bullets)):
@@ -340,11 +480,113 @@ def game_scene():
                             display_enemies()
                             # ups the score 
                             score = score + 1
+                            score_text.clear()
+                            score_text.cursor(0,0)
+                            score_text.move(1,1)
+                            score_text.text("Score: {0}".format(score))
+
+        # checks each frame to see if a enemy touches the player and end the game
+        for enemies_num in range(len(enemies)):
+            if enemies[enemies_num].x > 0:
+                if stage.collide(enemies[enemies_num].x +1, enemies[enemies_num].y, 
+                                 enemies[enemies_num].x + 15, enemies[enemies_num].y + 15,
+                                 player.x, player.y, player.x +15, player.y + 15):
+                    # crash sound
+                    sound.stop()
+                    sound.play(crash_sound)
+                    time.sleep(3.0)
+                    game_over_scene(score)
 
         # redraws sprites
         game.render_sprites(enemies + bullets + [player])
+        # game tick waits until refresh is over
         game.tick()
 
+def game_over_scene(final_score):
+# a function for the game over scene
+
+
+    # to turn off sound from the last scene
+    sound = ugame.audio
+    sound.stop()
+    sound.mute(False)
+    lose_sound = open("losing.wav", 'rb')
+    # plays a sound when you lose
+    sound.play(lose_sound)
+
+    # image bank for CircuitPython
+    image_bank_2 = stage.Bank.from_bmp16("mt_game_studio.bmp")
+
+
+    # open and sets the background for image 0
+    background = stage.Grid(image_bank_2, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+
+    
+    # text for the screen
+    text = []
+    text1 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text1.move(22,20)
+    text1.text("Final Score: {:0>2d}".format(final_score))
+    text.append(text1)
+
+
+    text2 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text2.move(43,40)
+    text2.text("GAME OVER")
+    text.append(text2)
+
+
+    text3 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text3.move(32, 60)
+    text3.text("PRESS SELECT")
+    text.append(text3)
+    
+    
+    text4 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text4.move(20, 80)
+    text4.text("TO RETURN TO MENU")
+    text.append(text4)
+
+
+    text5 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text5.move(38, 100)
+    text5.text("PRESS START")
+    text.append(text5)
+    
+    
+    text6 = stage.Text(width=29, height=14, font=None, palette=constants.BLUE_PALETTE, buffer=None)
+    text6.move(16, 115)
+    text6.text("TO RESTART LEVEL")
+    text.append(text6)
+
+
+    # stage for the background to show with 60 hertz
+    game = stage.Stage(ugame.display, constants.Hertz)
+    # sets layers up for objects to display correctly
+    game.layers = text + [background]
+    # renders the background and the initial location of the sprite list
+    game.render_block()
+
+
+    # game loop, repeats forever
+    while True:
+        
+        # user input
+        keys = ugame.buttons.get_pressed()
+
+
+        # start button selection
+        if keys & ugame.K_SELECT != 0:
+            supervisor.reload()
+
+
+        if keys & ugame.K_START != 0:
+            game_scene()
+
+
+        # updates game logic
+        # waits until refresh rate is done
+        game.tick()
 
 if __name__ == "__main__":
     splash_scene()
