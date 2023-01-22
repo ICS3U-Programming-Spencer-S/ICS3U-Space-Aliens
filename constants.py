@@ -12,8 +12,8 @@ SCREEN_GRID_X = 10
 SCREEN_GRID_Y = 8
 SPRITE_SIZE = 16
 # max enemies and bullet 
-MAX_NUM_EME = 5
-MAX_NUM_BULLET = 5
+MAX_NUM_EME = 6
+MAX_NUM_BULLET = 6
 # player and enemy sprite speed
 PLAYER_SPEED = 1
 ENEMY_SPEED = 1
